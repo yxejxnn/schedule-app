@@ -6,7 +6,6 @@ import com.example.ch3scheduleapp.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,6 +98,11 @@ public class ScheduleService {
                 () -> new IllegalStateException("없는 일정입니다.")
         );
 
+        // 비밀번호를 입력하지 않은 경우
+        if (requestDto.getPassword() == null || requestDto.getPassword().isBlank()) {
+            throw new IllegalArgumentException("비밀번호를 입력해주세요.");
+        }
+
         // 비밀번호 검증
         if (!schedule.getPassword().equals(requestDto.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
@@ -125,6 +129,10 @@ public class ScheduleService {
         );
         // 선택한 일정이 있는 경우
         // 비밀번호 검증
+        // 비밀번호를 입력하지 않은 경우
+        if (requestDto.getPassword() == null || requestDto.getPassword().isBlank()) {
+            throw new IllegalArgumentException("비밀번호를 입력해주세요.");
+        }
         // 비밀번호가 일치하지 않을 때
         if (!schedule.getPassword().equals(requestDto.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하기 않습니다.");
