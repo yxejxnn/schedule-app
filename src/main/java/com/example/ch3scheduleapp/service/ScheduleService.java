@@ -1,8 +1,6 @@
 package com.example.ch3scheduleapp.service;
 
-import com.example.ch3scheduleapp.dto.ScheduleCreateRequestDto;
-import com.example.ch3scheduleapp.dto.ScheduleCreateResponseDto;
-import com.example.ch3scheduleapp.dto.ScheduleGetResponseDto;
+import com.example.ch3scheduleapp.dto.*;
 import com.example.ch3scheduleapp.entity.Schedule;
 import com.example.ch3scheduleapp.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -87,6 +85,23 @@ public class ScheduleService {
                 schedule.getId(),
                 schedule.getTitle(),
                 schedule.getContent(),
+                schedule.getAuthorName(),
+                schedule.getCreatedAt(),
+                schedule.getUpdatedAt()
+        );
+    }
+
+    // 수정 (업데이트)
+    @Transactional
+    public ScheduleUpdateResponseDto update(Long scheduleId, ScheduleUpdateRequestDto requestDto) {
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
+                () -> new IllegalStateException("없는 일정입니다.")
+        );
+        schedule.update(requestDto.getTitle(), requestDto.getAuthorName());
+
+        return new ScheduleUpdateResponseDto(
+                schedule.getId(),
+                schedule.getTitle(),
                 schedule.getAuthorName(),
                 schedule.getCreatedAt(),
                 schedule.getUpdatedAt()
