@@ -6,6 +6,7 @@ import com.example.ch3scheduleapp.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,5 +114,23 @@ public class ScheduleService {
                 schedule.getCreatedAt(),
                 schedule.getUpdatedAt()
         );
+    }
+
+    // 삭제
+    @Transactional
+    public void delete(Long scheduleId, ScheduleDeleteRequestDto requestDto) {
+        // 선택한 일정이 없는 경우
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
+                () -> new IllegalStateException("없는 일정입니다.")
+        );
+        // 선택한 일정이 있는 경우
+        // 비밀번호 검증
+        // 비밀번호가 일치하지 않을 때
+        if (!schedule.getPassword().equals(requestDto.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하기 않습니다.");
+        }
+        // 비밀번호가 일치 할 때
+        // 삭제
+        scheduleRepository.delete(schedule);
     }
 }
