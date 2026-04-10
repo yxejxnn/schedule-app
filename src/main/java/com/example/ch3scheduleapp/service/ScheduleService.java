@@ -102,6 +102,7 @@ public class ScheduleService {
         return new ScheduleUpdateResponseDto(
                 schedule.getId(),
                 schedule.getTitle(),
+                schedule.getContent(),
                 schedule.getAuthorName(),
                 schedule.getCreatedAt(),
                 schedule.getUpdatedAt()
