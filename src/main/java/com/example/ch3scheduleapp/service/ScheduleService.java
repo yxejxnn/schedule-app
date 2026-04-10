@@ -76,4 +76,20 @@ public class ScheduleService {
         }
         return dtos;
     }
+
+    // 선택 조회
+    @Transactional(readOnly = true)
+    public ScheduleGetResponseDto getOne(Long scheduleId) {
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
+                () -> new IllegalStateException("없는 일정입니다.")
+        );
+        return new ScheduleGetResponseDto(
+                schedule.getId(),
+                schedule.getTitle(),
+                schedule.getContent(),
+                schedule.getAuthorName(),
+                schedule.getCreatedAt(),
+                schedule.getUpdatedAt()
+        );
+    }
 }

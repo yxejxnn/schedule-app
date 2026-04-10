@@ -30,4 +30,11 @@ public class ScheduleController {
         List<ScheduleGetResponseDto> result = scheduleService.getAll(authorName);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
+
+    // 선택 조회
+    @GetMapping("/schedules/{scheduleId}")
+    public ResponseEntity<ScheduleGetResponseDto> scheduleGetOne(@PathVariable Long scheduleId) {
+        ScheduleGetResponseDto result = scheduleService.getOne(scheduleId);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
 }
