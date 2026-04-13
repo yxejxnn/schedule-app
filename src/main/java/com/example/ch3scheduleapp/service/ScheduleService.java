@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -46,36 +47,21 @@ public class ScheduleService {
         List<Schedule> scheduleList = scheduleRepository.findAll();
 
         // 작성자명(authorName) 조건이 맞는 일정만 담을 리스트 생성
-        List<Schedule> filteredScheduleList = new ArrayList<>();
+        List<Schedule> filteredScheduleList = scheduleList.stream()
+                .filter(schedule -> authorName == null || authorName.isBlank() || schedule.getAuthorName().equals(authorName))
+                .sorted((s1, s2) -> s2.getUpdatedAt().compareTo(s1.getUpdatedAt()))
+                .collect(Collectors.toList());
 
-        // 작성자명이 들어오지 않으면, 모든 일정을 다 넣기
-        if (authorName == null || authorName.isBlank()) {
-            filteredScheduleList.addAll(scheduleList);
-        } else {
-            // 작성자명이 들어오면 같은 작성자명의 일정만 넣기
-            for (Schedule schedule : scheduleList) {
-                if (schedule.getAuthorName().equals(authorName)) {
-                    filteredScheduleList.add(schedule);
-                }
-            }
-        }
-        // 수정일 기준 내림차순 정렬
-        filteredScheduleList.sort((s1, s2) -> s2.getUpdatedAt().compareTo(s1.getUpdatedAt()));
-
-        List<ScheduleGetAllResponseDto> dtos = new ArrayList<>();
-
-        for (Schedule schedule : filteredScheduleList) {
-            ScheduleGetAllResponseDto dto = new ScheduleGetAllResponseDto(
-                    schedule.getId(),
-                    schedule.getTitle(),
-                    schedule.getContent(),
-                    schedule.getAuthorName(),
-                    schedule.getCreatedAt(),
-                    schedule.getUpdatedAt()
-            );
-            dtos.add(dto);
-        }
-        return dtos;
+        return filteredScheduleList.stream()
+                .map(schedule -> new ScheduleGetAllResponseDto(
+                        schedule.getId(),
+                        schedule.getTitle(),
+                        schedule.getContent(),
+                        schedule.getAuthorName(),
+                        schedule.getCreatedAt(),
+                        schedule.getUpdatedAt()
+                ))
+                .collect(Collectors.toList());
     }
 
     // 선택 조회
@@ -87,19 +73,15 @@ public class ScheduleService {
 
         List<Comment> commentList = commentRepository.findByScheduleId(scheduleId);
 
-        // 댓글을 DTO로 변환
-        List<CommentCreateResponseDto> dtos = new ArrayList<>();
-
-        for (Comment comment : commentList) {
-            CommentCreateResponseDto dto = new CommentCreateResponseDto(
-                    comment.getId(),
-                    comment.getContent(),
-                    comment.getAuthorName(),
-                    comment.getCreatedAt(),
-                    comment.getUpdatedAt()
-            );
-            dtos.add(dto);
-        }
+        List<CommentCreateResponseDto> dtoList = commentList.stream()
+                .map(comment -> new CommentCreateResponseDto(
+                        comment.getId(),
+                        comment.getContent(),
+                        comment.getAuthorName(),
+                        comment.getCreatedAt(),
+                        comment.getUpdatedAt()
+                ))
+                .collect(Collectors.toList());
 
         return new ScheduleGetOneResponseDto(
                 schedule.getId(),
@@ -108,7 +90,7 @@ public class ScheduleService {
                 schedule.getAuthorName(),
                 schedule.getCreatedAt(),
                 schedule.getUpdatedAt(),
-                dtos
+                dtoList
         );
     }
 

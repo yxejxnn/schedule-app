@@ -9,4 +9,5 @@ public class CommentCreateRequestDto {
     private String content;
     private String authorName;
     private String password;
+    private Long scheduleId;
 }
