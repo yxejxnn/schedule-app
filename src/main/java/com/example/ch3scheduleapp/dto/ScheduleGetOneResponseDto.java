@@ -3,9 +3,10 @@ package com.example.ch3scheduleapp.dto;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
-public class ScheduleGetResponseDto {
+public class ScheduleGetOneResponseDto {
 
     // 속성
     private final Long id;
@@ -14,14 +15,16 @@ public class ScheduleGetResponseDto {
     private final String authorName;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
+    private final List<CommentCreateResponseDto> commentList;
 
     // 생성자
-    public ScheduleGetResponseDto(Long id, String title, String content, String authorName, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public ScheduleGetOneResponseDto(Long id, String title, String content, String authorName, LocalDateTime createdAt, LocalDateTime updatedAt, List<CommentCreateResponseDto> commentList) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.authorName = authorName;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.commentList = commentList;
     }
 }

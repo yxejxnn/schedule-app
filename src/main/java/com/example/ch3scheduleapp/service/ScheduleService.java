@@ -1,7 +1,9 @@
 package com.example.ch3scheduleapp.service;
 
 import com.example.ch3scheduleapp.dto.*;
+import com.example.ch3scheduleapp.entity.Comment;
 import com.example.ch3scheduleapp.entity.Schedule;
+import com.example.ch3scheduleapp.repository.CommentRepository;
 import com.example.ch3scheduleapp.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import java.util.List;
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
+    private final CommentRepository commentRepository;
 
     // 저장
     @Transactional
@@ -39,7 +42,7 @@ public class ScheduleService {
 
     // 전체 조회
     @Transactional(readOnly = true)
-    public List<ScheduleGetResponseDto> getAll(String authorName) {
+    public List<ScheduleGetAllResponseDto> getAll(String authorName) {
         List<Schedule> scheduleList = scheduleRepository.findAll();
 
         // 작성자명(authorName) 조건이 맞는 일정만 담을 리스트 생성
@@ -59,10 +62,10 @@ public class ScheduleService {
         // 수정일 기준 내림차순 정렬
         filteredScheduleList.sort((s1, s2) -> s2.getUpdatedAt().compareTo(s1.getUpdatedAt()));
 
-        List<ScheduleGetResponseDto> dtos = new ArrayList<>();
+        List<ScheduleGetAllResponseDto> dtos = new ArrayList<>();
 
         for (Schedule schedule : filteredScheduleList) {
-            ScheduleGetResponseDto dto = new ScheduleGetResponseDto(
+            ScheduleGetAllResponseDto dto = new ScheduleGetAllResponseDto(
                     schedule.getId(),
                     schedule.getTitle(),
                     schedule.getContent(),
@@ -77,17 +80,35 @@ public class ScheduleService {
 
     // 선택 조회
     @Transactional(readOnly = true)
-    public ScheduleGetResponseDto getOne(Long scheduleId) {
+    public ScheduleGetOneResponseDto getOne(Long scheduleId) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new IllegalStateException("없는 일정입니다.")
         );
-        return new ScheduleGetResponseDto(
+
+        List<Comment> commentList = commentRepository.findByScheduleId(scheduleId);
+
+        // 댓글을 DTO로 변환
+        List<CommentCreateResponseDto> dtos = new ArrayList<>();
+
+        for (Comment comment : commentList) {
+            CommentCreateResponseDto dto = new CommentCreateResponseDto(
+                    comment.getId(),
+                    comment.getContent(),
+                    comment.getAuthorName(),
+                    comment.getCreatedAt(),
+                    comment.getUpdatedAt()
+            );
+            dtos.add(dto);
+        }
+
+        return new ScheduleGetOneResponseDto(
                 schedule.getId(),
                 schedule.getTitle(),
                 schedule.getContent(),
                 schedule.getAuthorName(),
                 schedule.getCreatedAt(),
-                schedule.getUpdatedAt()
+                schedule.getUpdatedAt(),
+                dtos
         );
     }
 
