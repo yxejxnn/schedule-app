@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    long countByscheduleId(Long scheduleId);
+    long countByScheduleId(Long scheduleId);
     List<Comment> findByScheduleId(Long scheduleId);
 }

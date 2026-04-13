@@ -156,7 +156,7 @@ public class ScheduleService {
         }
         // 비밀번호가 일치하지 않을 때
         if (!schedule.getPassword().equals(requestDto.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하기 않습니다.");
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
         // 비밀번호가 일치 할 때
         // 삭제

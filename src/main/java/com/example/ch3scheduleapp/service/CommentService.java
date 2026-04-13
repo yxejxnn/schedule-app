@@ -22,12 +22,12 @@ public class CommentService {
     @Transactional
     public CommentCreateResponseDto save(Long scheduleId, CommentCreateRequestDto requestDto) {
         // 일정 존재 확인
-        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
+        scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new IllegalStateException("없는 일정입니다.")
         );
 
         // 댓글 10개 초과 시 예외처리
-        long commentCount = commentRepository.countByscheduleId(scheduleId);
+        long commentCount = commentRepository.countByScheduleId(scheduleId);
         if (commentCount >= 10) {
             throw new IllegalStateException("댓글은 10개까지만 작성할 수 있습니다.");
         }
